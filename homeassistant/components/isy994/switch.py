@@ -1,13 +1,11 @@
 """Support for ISY994 switches."""
-import logging
 from typing import Callable
 
-from homeassistant.components.switch import DOMAIN, SwitchDevice
+from homeassistant.components.switch import DOMAIN as SWITCH, SwitchEntity
 from homeassistant.helpers.typing import ConfigType
 
 from . import ISY994_NODES, ISY994_PROGRAMS, ISYDevice
-
-_LOGGER = logging.getLogger(__name__)
+from .const import _LOGGER
 
 
 def setup_platform(
@@ -15,17 +13,17 @@ def setup_platform(
 ):
     """Set up the ISY994 switch platform."""
     devices = []
-    for node in hass.data[ISY994_NODES][DOMAIN]:
+    for node in hass.data[ISY994_NODES][SWITCH]:
         if not node.dimmable:
             devices.append(ISYSwitchDevice(node))
 
-    for name, status, actions in hass.data[ISY994_PROGRAMS][DOMAIN]:
+    for name, status, actions in hass.data[ISY994_PROGRAMS][SWITCH]:
         devices.append(ISYSwitchProgram(name, status, actions))
 
     add_entities(devices)
 
 
-class ISYSwitchDevice(ISYDevice, SwitchDevice):
+class ISYSwitchDevice(ISYDevice, SwitchEntity):
     """Representation of an ISY994 switch device."""
 
     @property
